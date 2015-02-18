@@ -35,6 +35,11 @@ module.exports = function(grunt) {
 				src: ["ts/**/*.ts"],
 				out: '',
 				watch: '',
+			},
+			watch: {
+				src: ["ts/**/*.ts"],
+				out: '',
+				watch: 'ts',
 			}
 		},
 	});
@@ -44,6 +49,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 
 	grunt.registerTask("build", ["clean:main", "ts:main", "copy:main", "clean:compiled"]);
+	grunt.registerTask("watch", ["clean:main", "ts:watch", "copy:main", "clean:compiled"]);
 
 	grunt.registerTask("default", "build");
 	
