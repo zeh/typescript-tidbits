@@ -45,19 +45,6 @@ module.exports = function(grunt) {
 
 	grunt.registerTask("build", ["clean:main", "ts:main", "copy:main", "clean:compiled"]);
 
-	grunt.registerTask('default', 'Shows available tasks', function() {
-		grunt.log.writeln("--------------------------------------------------------------------");
-		grunt.log.writeln("Available tasks: ");
-		grunt.log.writeln();
-		grunt.log.writeln("clean		: Clean the /js folder");
-		grunt.log.writeln("copy			: Copy static (main) files");
-		grunt.log.writeln("build		: Clean, copy static files, and build the ts files and watch for changes");
-		grunt.log.writeln("--------------------------------------------------------------------");
-	});
+	grunt.registerTask("default", "build");
 	
-	/*
-	make.bat used to be:
-	tsc ts/main.ts --sourcemap -out photobooth.js
-	*/
-
 };
