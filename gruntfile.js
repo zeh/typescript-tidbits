@@ -35,21 +35,25 @@ module.exports = function(grunt) {
 				src: ["ts/**/*.ts"],
 				out: '',
 				watch: '',
-			},
-			watch: {
-				src: ["ts/**/*.ts"],
-				out: '',
-				watch: 'ts',
 			}
 		},
+		watch: {
+			scripts: {
+				files: ['**/*.ts'],
+				tasks: ['build'],
+				options: {
+					spawn: false,
+				},
+			},
+		}
 	});
 	
 	grunt.loadNpmTasks("grunt-ts");
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask("build", ["clean:main", "ts:main", "copy:main", "clean:compiled"]);
-	grunt.registerTask("watch", ["clean:main", "ts:watch", "copy:main", "clean:compiled"]);
 
 	grunt.registerTask("default", "build");
 	
