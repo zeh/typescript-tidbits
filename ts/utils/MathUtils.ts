@@ -3,7 +3,7 @@ module zehfernando.utils {
 	/**
 	 * @author Zeh Fernando - z at zeh.com.br
 	 */
-	class MathUtils {
+	export class MathUtils {
 
 		static DEG2RAD:number = 1/180 * Math.PI;
 		static RAD2DEG:number = 1/Math.PI * 180;
