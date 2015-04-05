@@ -4,10 +4,8 @@ var zehfernando;
     (function (signals) {
         var SimpleSignal = (function () {
             function SimpleSignal() {
-            }
-            SimpleSignal.prototype.SimpleSignal = function () {
                 this.functions = [];
-            };
+            }
             SimpleSignal.prototype.add = function (func) {
                 if (this.functions.indexOf(func) == -1) {
                     this.functions.push(func);
@@ -49,6 +47,7 @@ var zehfernando;
             });
             return SimpleSignal;
         })();
+        signals.SimpleSignal = SimpleSignal;
     })(signals = zehfernando.signals || (zehfernando.signals = {}));
 })(zehfernando || (zehfernando = {}));
 //# sourceMappingURL=SimpleSignal.js.map

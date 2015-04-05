@@ -54,6 +54,7 @@ var zehfernando;
             MathUtils.RAD2DEG = 1 / Math.PI * 180;
             return MathUtils;
         })();
+        utils.MathUtils = MathUtils;
     })(utils = zehfernando.utils || (zehfernando.utils = {}));
 })(zehfernando || (zehfernando = {}));
 //# sourceMappingURL=MathUtils.js.map
