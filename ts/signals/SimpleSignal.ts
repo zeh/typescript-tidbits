@@ -3,16 +3,17 @@ module zehfernando.signals {
 	/**
 	 * @author zeh fernando
 	 */
-	export class SimpleSignal {
+	export class SimpleSignal<F extends Function> {
 
 		// Super-simple signals class inspired by Robert Penner's AS3Signals:
 		// http://github.com/robertpenner/as3-signals
-		// TODO: pass functions with any number of params? (a: any) => any
 
 		// Properties
-		private functions:Array<Function>;
+		private functions:Array<F> = [];
 
-		private ifr:number;										// i for removal (to limit garbage collection)
+		// Temp variables
+		private ifr:number;
+
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ module zehfernando.signals {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public add(func:Function):boolean {
+		public add(func:F):boolean {
 			if (this.functions.indexOf(func) == -1) {
 				this.functions.push(func);
 				return true;
@@ -33,7 +34,7 @@ module zehfernando.signals {
 			return false;
 		}
 
-		public remove(func: Function):boolean {
+		public remove(func:F):boolean {
 			this.ifr = this.functions.indexOf(func);
 			if (this.ifr > -1) {
 				this.functions.splice(this.ifr, 1);
