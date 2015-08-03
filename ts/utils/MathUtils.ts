@@ -1,5 +1,5 @@
 /**
- * @author Zeh Fernando - z at zeh.com.br
+ * @author Zeh Fernando
  */
 export default class MathUtils {
 
