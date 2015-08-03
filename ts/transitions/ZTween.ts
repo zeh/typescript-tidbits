@@ -1,6 +1,9 @@
 /// <reference path='../signals/SimpleSignal.ts'/>
 /// <reference path='Easing.ts'/>
 
+import SimpleSignal from '../signals/SimpleSignal';
+import Easing from 'Easing';
+
 module zehfernando.transitions {
 
 	/**
@@ -31,9 +34,9 @@ module zehfernando.transitions {
 		//private updatesSkipped			:uint;			// How many updates have already been skipped
 		private started					:boolean;			// Whether or not this tween has already started executing
 
-		private _onStart				:zehfernando.signals.SimpleSignal;
-		private _onUpdate				:zehfernando.signals.SimpleSignal;
-		private _onComplete				:zehfernando.signals.SimpleSignal;
+		private _onStart				:SimpleSignal<Function>;
+		private _onUpdate				:SimpleSignal<Function>;
+		private _onComplete				:SimpleSignal<Function>;
 
 		// External properties
 		private _paused: boolean;			// Whether or not this tween is currently paused
@@ -87,9 +90,9 @@ module zehfernando.transitions {
 			this.delay			= 0;
 			this.transition		= Easing.none;
 
-			this._onStart		= new zehfernando.signals.SimpleSignal();
-			this._onUpdate		= new zehfernando.signals.SimpleSignal();
-			this._onComplete	= new zehfernando.signals.SimpleSignal();
+			this._onStart		= new SimpleSignal();
+			this._onUpdate		= new SimpleSignal();
+			this._onComplete	= new SimpleSignal();
 
 			// Read parameters
 			if (parameters != null) {
@@ -519,13 +522,13 @@ module zehfernando.transitions {
 			this._target = target;
 		}
 
-		public get onStart(): zehfernando.signals.SimpleSignal {
+		public get onStart():SimpleSignal<Function> {
 			return this._onStart;
 		}
-		public get onUpdate(): zehfernando.signals.SimpleSignal {
+		public get onUpdate():SimpleSignal<Function> {
 			return this._onUpdate;
 		}
-		public get onComplete():zehfernando.signals.SimpleSignal {
+		public get onComplete():SimpleSignal<Function> {
 			return this._onComplete;
 		}
 	}
