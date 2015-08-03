@@ -1,6 +1,3 @@
-/// <reference path='../signals/SimpleSignal.ts'/>
-/// <reference path='Easing.ts'/>
-
 import SimpleSignal from '../signals/SimpleSignal';
 import Easing from 'Easing';
 
