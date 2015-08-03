@@ -1,110 +1,106 @@
-var zehfernando;
-(function (zehfernando) {
-    var utils;
-    (function (utils) {
+define(["require", "exports"], function (require, exports) {
+    /**
+     * @author Zeh Fernando - z at zeh.com.br
+     */
+    var MathUtils = (function () {
+        function MathUtils() {
+        }
+        // Inlining: http://www.bytearray.org/?p=4789
+        // Not working: returning a buffer underflow every time I try using it
         /**
-         * @author Zeh Fernando - z at zeh.com.br
+         * Clamps a number to a range, by restricting it to a minimum and maximum values: if the passed value is lower than the minimum value, it's replaced by the minimum; if it's higher than the maximum value, it's replaced by the maximum; if not, it's unchanged.
+         * @param value	The value to be clamped.
+         * @param min		Minimum value allowed.
+         * @param max		Maximum value allowed.
+         * @return			The newly clamped value.
          */
-        var MathUtils = (function () {
-            function MathUtils() {
+        MathUtils.clamp = function (value, min, max) {
+            if (min === void 0) { min = 0; }
+            if (max === void 0) { max = 1; }
+            return value < min ? min : value > max ? max : value;
+        };
+        MathUtils.clampAuto = function (value, clamp1, clamp2) {
+            if (clamp1 === void 0) { clamp1 = 0; }
+            if (clamp2 === void 0) { clamp2 = 1; }
+            if (clamp2 < clamp1) {
+                var v = clamp2;
+                clamp2 = clamp1;
+                clamp1 = v;
             }
-            // Inlining: http://www.bytearray.org/?p=4789
-            // Not working: returning a buffer underflow every time I try using it
-            /**
-             * Clamps a number to a range, by restricting it to a minimum and maximum values: if the passed value is lower than the minimum value, it's replaced by the minimum; if it's higher than the maximum value, it's replaced by the maximum; if not, it's unchanged.
-             * @param value	The value to be clamped.
-             * @param min		Minimum value allowed.
-             * @param max		Maximum value allowed.
-             * @return			The newly clamped value.
-             */
-            MathUtils.clamp = function (value, min, max) {
-                if (min === void 0) { min = 0; }
-                if (max === void 0) { max = 1; }
-                return value < min ? min : value > max ? max : value;
-            };
-            MathUtils.clampAuto = function (value, clamp1, clamp2) {
-                if (clamp1 === void 0) { clamp1 = 0; }
-                if (clamp2 === void 0) { clamp2 = 1; }
-                if (clamp2 < clamp1) {
-                    var v = clamp2;
-                    clamp2 = clamp1;
-                    clamp1 = v;
-                }
-                return value < clamp1 ? clamp1 : value > clamp2 ? clamp2 : value;
-            };
-            /**
-             * Maps a value from a range, determined by old minimum and maximum values, to a new range, determined by new minimum and maximum values. These minimum and maximum values are referential; the new value is not clamped by them.
-             * @param value	The value to be re-mapped.
-             * @param oldMin	The previous minimum value.
-             * @param oldMax	The previous maximum value.
-             * @param newMin	The new minimum value.
-             * @param newMax	The new maximum value.
-             * @return			The new value, mapped to the new range.
-             */
-            MathUtils.map = function (value, oldMin, oldMax, newMin, newMax, clamp) {
-                if (newMin === void 0) { newMin = 0; }
-                if (newMax === void 0) { newMax = 1; }
-                if (clamp === void 0) { clamp = false; }
-                if (oldMin == oldMax)
-                    return newMin;
-                this.map_p = ((value - oldMin) / (oldMax - oldMin) * (newMax - newMin)) + newMin;
-                if (clamp)
-                    this.map_p = newMin < newMax ? this.clamp(this.map_p, newMin, newMax) : this.clamp(this.map_p, newMax, newMin);
-                return this.map_p;
-            };
-            /**
-             * Clamps a value to a range, by restricting it to a minimum and maximum values but folding the value to the range instead of simply resetting to the minimum and maximum. It works like a more powerful Modulo function.
-             * @param value	The value to be clamped.
-             * @param min		Minimum value allowed.
-             * @param max		Maximum value allowed.
-             * @return			The newly clamped value.
-             * @example Some examples:
-             * <listing version="3.0">
-             * 	trace(MathUtils.roundClamp(14, 0, 10));
-             * 	// Result: 4
-             *
-             * 	trace(MathUtils.roundClamp(360, 0, 360));
-             * 	// Result: 0
-             *
-             * 	trace(MathUtils.roundClamp(360, -180, 180));
-             * 	// Result: 0
-             *
-             * 	trace(MathUtils.roundClamp(21, 0, 10));
-             * 	// Result: 1
-             *
-             * 	trace(MathUtils.roundClamp(-98, 0, 100));
-             * 	// Result: 2
-             * </listing>
-             */
-            // Need a better name?
-            MathUtils.rangeMod = function (value, min, pseudoMax) {
-                var range = pseudoMax - min;
-                value = (value - min) % range;
-                if (value < 0)
-                    value = range - (-value % range);
-                value += min;
-                return value;
-            };
-            MathUtils.isPowerOfTwo = function (value) {
-                // Return true if a number if a power of two (2, 4, 8, etc)
-                // There's probably a better way, but trying to avoid bitwise manipulations
-                while (value % 2 == 0 && value > 2)
-                    value /= 2;
-                return value == 2;
-            };
-            MathUtils.getHighestPowerOfTwo = function (value) {
-                // Return a power of two number that is higher than the passed value
-                var c = 1;
-                while (c < value)
-                    c *= 2;
-                return c;
-            };
-            MathUtils.DEG2RAD = 1 / 180 * Math.PI;
-            MathUtils.RAD2DEG = 1 / Math.PI * 180;
-            return MathUtils;
-        })();
-        utils.MathUtils = MathUtils;
-    })(utils = zehfernando.utils || (zehfernando.utils = {}));
-})(zehfernando || (zehfernando = {}));
+            return value < clamp1 ? clamp1 : value > clamp2 ? clamp2 : value;
+        };
+        /**
+         * Maps a value from a range, determined by old minimum and maximum values, to a new range, determined by new minimum and maximum values. These minimum and maximum values are referential; the new value is not clamped by them.
+         * @param value	The value to be re-mapped.
+         * @param oldMin	The previous minimum value.
+         * @param oldMax	The previous maximum value.
+         * @param newMin	The new minimum value.
+         * @param newMax	The new maximum value.
+         * @return			The new value, mapped to the new range.
+         */
+        MathUtils.map = function (value, oldMin, oldMax, newMin, newMax, clamp) {
+            if (newMin === void 0) { newMin = 0; }
+            if (newMax === void 0) { newMax = 1; }
+            if (clamp === void 0) { clamp = false; }
+            if (oldMin == oldMax)
+                return newMin;
+            this.map_p = ((value - oldMin) / (oldMax - oldMin) * (newMax - newMin)) + newMin;
+            if (clamp)
+                this.map_p = newMin < newMax ? this.clamp(this.map_p, newMin, newMax) : this.clamp(this.map_p, newMax, newMin);
+            return this.map_p;
+        };
+        /**
+         * Clamps a value to a range, by restricting it to a minimum and maximum values but folding the value to the range instead of simply resetting to the minimum and maximum. It works like a more powerful Modulo function.
+         * @param value	The value to be clamped.
+         * @param min		Minimum value allowed.
+         * @param max		Maximum value allowed.
+         * @return			The newly clamped value.
+         * @example Some examples:
+         * <listing version="3.0">
+         * 	trace(MathUtils.roundClamp(14, 0, 10));
+         * 	// Result: 4
+         *
+         * 	trace(MathUtils.roundClamp(360, 0, 360));
+         * 	// Result: 0
+         *
+         * 	trace(MathUtils.roundClamp(360, -180, 180));
+         * 	// Result: 0
+         *
+         * 	trace(MathUtils.roundClamp(21, 0, 10));
+         * 	// Result: 1
+         *
+         * 	trace(MathUtils.roundClamp(-98, 0, 100));
+         * 	// Result: 2
+         * </listing>
+         */
+        // Need a better name?
+        MathUtils.rangeMod = function (value, min, pseudoMax) {
+            var range = pseudoMax - min;
+            value = (value - min) % range;
+            if (value < 0)
+                value = range - (-value % range);
+            value += min;
+            return value;
+        };
+        MathUtils.isPowerOfTwo = function (value) {
+            // Return true if a number if a power of two (2, 4, 8, etc)
+            // There's probably a better way, but trying to avoid bitwise manipulations
+            while (value % 2 == 0 && value > 2)
+                value /= 2;
+            return value == 2;
+        };
+        MathUtils.getHighestPowerOfTwo = function (value) {
+            // Return a power of two number that is higher than the passed value
+            var c = 1;
+            while (c < value)
+                c *= 2;
+            return c;
+        };
+        MathUtils.DEG2RAD = 1 / 180 * Math.PI;
+        MathUtils.RAD2DEG = 1 / Math.PI * 180;
+        return MathUtils;
+    })();
+    exports.default = MathUtils;
+});
 
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInV0aWxzL01hdGhVdGlscy50cyJdLCJuYW1lcyI6WyJ6ZWhmZXJuYW5kbyIsInplaGZlcm5hbmRvLnV0aWxzIiwiemVoZmVybmFuZG8udXRpbHMuTWF0aFV0aWxzIiwiemVoZmVybmFuZG8udXRpbHMuTWF0aFV0aWxzLmNvbnN0cnVjdG9yIiwiemVoZmVybmFuZG8udXRpbHMuTWF0aFV0aWxzLmNsYW1wIiwiemVoZmVybmFuZG8udXRpbHMuTWF0aFV0aWxzLmNsYW1wQXV0byIsInplaGZlcm5hbmRvLnV0aWxzLk1hdGhVdGlscy5tYXAiLCJ6ZWhmZXJuYW5kby51dGlscy5NYXRoVXRpbHMucmFuZ2VNb2QiLCJ6ZWhmZXJuYW5kby51dGlscy5NYXRoVXRpbHMuaXNQb3dlck9mVHdvIiwiemVoZmVybmFuZG8udXRpbHMuTWF0aFV0aWxzLmdldEhpZ2hlc3RQb3dlck9mVHdvIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFPLFdBQVcsQ0FvR2pCO0FBcEdELFdBQU8sV0FBVztJQUFDQSxJQUFBQSxLQUFLQSxDQW9HdkJBO0lBcEdrQkEsV0FBQUEsS0FBS0EsRUFBQ0EsQ0FBQ0E7UUFFekJDLEFBR0FBOztXQURHQTs7WUFDSEM7WUE2RkFDLENBQUNBO1lBckZBRCw2Q0FBNkNBO1lBQzdDQSxzRUFBc0VBO1lBRXRFQTs7Ozs7O2VBTUdBO1lBQ0lBLGVBQUtBLEdBQVpBLFVBQWFBLEtBQVlBLEVBQUVBLEdBQWNBLEVBQUVBLEdBQWNBO2dCQUE5QkUsbUJBQWNBLEdBQWRBLE9BQWNBO2dCQUFFQSxtQkFBY0EsR0FBZEEsT0FBY0E7Z0JBQ3hEQSxNQUFNQSxDQUFDQSxLQUFLQSxHQUFHQSxHQUFHQSxHQUFHQSxHQUFHQSxHQUFHQSxLQUFLQSxHQUFHQSxHQUFHQSxHQUFHQSxHQUFHQSxHQUFHQSxLQUFLQSxDQUFDQTtZQUN0REEsQ0FBQ0E7WUFFTUYsbUJBQVNBLEdBQWhCQSxVQUFpQkEsS0FBWUEsRUFBRUEsTUFBaUJBLEVBQUVBLE1BQWlCQTtnQkFBcENHLHNCQUFpQkEs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R0FBVUEsQ0FBQ0EsQ0FBQ0E7Z0JBQ2pCQSxPQUFPQSxDQUFDQSxHQUFHQSxLQUFLQTtvQkFBRUEsQ0FBQ0EsSUFBSUEsQ0FBQ0EsQ0FBQ0E7Z0JBQ3pCQSxNQUFNQSxDQUFDQSxDQUFDQSxDQUFDQTtZQUNWQSxDQUFDQTtZQTFGTVAsaUJBQU9BLEdBQVVBLENBQUNBLEdBQUNBLEdBQUdBLEdBQUdBLElBQUlBLENBQUNBLEVBQUVBLENBQUNBO1lBQ2pDQSxpQkFBT0EsR0FBVUEsQ0FBQ0EsR0FBQ0EsSUFBSUEsQ0FBQ0EsRUFBRUEsR0FBR0EsR0FBR0EsQ0FBQ0E7WUEwRnpDQSxnQkFBQ0E7UUFBREEsQ0E3RkFELEFBNkZDQyxJQUFBRDtRQTdGWUEsZUFBU0EsWUE2RnJCQSxDQUFBQTtJQUVGQSxDQUFDQSxFQXBHa0JELEtBQUtBLEdBQUxBLGlCQUFLQSxLQUFMQSxpQkFBS0EsUUFvR3ZCQTtBQUFEQSxDQUFDQSxFQXBHTSxXQUFXLEtBQVgsV0FBVyxRQW9HakIiLCJmaWxlIjoidXRpbHMvTWF0aFV0aWxzLmpzIiwic291cmNlc0NvbnRlbnQiOlsibW9kdWxlIHplaGZlcm5hbmRvLnV0aWxzIHtcclxuXHJcblx0LyoqXHJcblx0ICogQGF1dGhvciBaZWggRmVybmFuZG8gLSB6IGF0IHplaC5jb20uYnJcclxuXHQgKi9cclxuXHRleHBvcnQgY2xhc3MgTWF0aFV0aWxzIHtcclxuXHJcblx0XHRzdGF0aWMgREVHMlJBRDpudW1iZXIgPSAxLzE4MCAqIE1hdGguUEk7XHJcblx0XHRzdGF0aWMgUkFEMkRFRzpudW1iZXIgPSAxL01hdGguUEkgKiAxODA7XHJcblxyXG5cdFx0Ly8gVGVtcG9yYXJ5IHZhcnMgZm9yIGZhc3RlciBhbGxvY2F0aW9uc1xyXG5cdFx0cHJpdmF0ZSBzdGF0aWMgbWFwX3A6bnVtYmVyO1xyXG5cclxuXHRcdC8vIElubGluaW5nOiBodHRwOi8vd3d3LmJ5dGVhcnJheS5vcmcvP3A9NDc4OVxyXG5cdFx0Ly8gTm90IHdvcmtpbmc6IHJldHVybmluZyBhIGJ1ZmZlciB1bmRlcmZsb3cgZXZlcnkgdGltZSBJIHRyeSB1c2luZyBpdFxyXG5cclxuXHRcdC8qKlxyXG5cdFx0ICogQ2xhbXBzIGEgbnVtYmVyIHRvIGEgcmFuZ2UsIGJ5IHJlc3RyaWN0aW5nIGl0IHRvIGEgbWluaW11bSBhbmQgbWF4aW11bSB2YWx1ZXM6IGlmIHRoZSBwYXNzZWQgdmFsdWUgaXMgbG93ZXIgdGhhbiB0aGUgbWluaW11bSB2YWx1ZSwgaXQncyByZXBsYWNlZCBieSB0aGUgbWluaW11bTsgaWYgaXQncyBoaWdoZXIgdGhhbiB0aGUgbWF4aW11bSB2YWx1ZSwgaXQncyByZXBsYWNlZCBieSB0aGUgbWF4aW11bTsgaWYgbm90LCBpdCdzIHVuY2hhbmdlZC5cclxuXHRcdCAqIEBwYXJhbSB2YWx1ZVx0VGhlIHZhbHVlIHRvIGJlIGNsYW1wZWQuXHJcblx0XHQgKiBAcGFyYW0gbWluXHRcdE1pbmltdW0gdmFsdWUgYWxsb3dlZC5cclxuXHRcdCAqIEBwYXJhbSBtYXhcdFx0TWF4aW11bSB2YWx1ZSBhbGxvd2VkLlxyXG5cdFx0ICogQHJldHVyblx0XHRcdFRoZSBuZXdseSBjbGFtcGVkIHZhbHVlLlxyXG5cdFx0ICovXHJcblx0XHRzdGF0aWMgY2xhbXAodmFsdWU6bnVtYmVyLCBtaW46bnVtYmVyID0gMCwgbWF4Om51bWJlciA9IDEpOm51bWJlciB7XHJcblx0XHRcdHJldHVybiB2YWx1ZSA8IG1pbiA/IG1pbiA6IHZhbHVlID4gbWF4ID8gbWF4IDogdmFsdWU7XHJcblx0XHR9XHJcblxyXG5cdFx0c3RhdGljIGNsYW1wQXV0byh2YWx1ZTpudW1iZXIsIGNsYW1wMTpudW1iZXIgPSAwLCBjbGFtcDI6bnVtYmVyID0gMSk6bnVtYmVyIHtcclxuXHRcdFx0aWYgKGNsYW1wMiA8IGNsYW1wMSkge1xyXG5cdFx0XHRcdHZhciB2Om51bWJlciA9IGNsYW1wMjtcclxuXHRcdFx0XHRjbGFtcDIgPSBjbGFtcDE7XHJcblx0XHRcdFx0Y2xhbXAxID0gdjtcclxuXHRcdFx0fVxyXG5cdFx0XHRyZXR1cm4gdmFsdWUgPCBjbGFtcDEgPyBjbGFtcDEgOiB2YWx1ZSA+IGNsYW1wMiA/IGNsYW1wMiA6IHZhbHVlO1xyXG5cdFx0fVxyXG5cclxuXHRcdC8qKlxyXG5cdFx0ICogTWFwcyBhIHZhbHVlIGZyb20gYSByYW5nZSwgZGV0ZXJtaW5lZCBieSBvbGQgbWluaW11bSBhbmQgbWF4aW11bSB2YWx1ZXMsIHRvIGEgbmV3IHJhbmdlLCBkZXRlcm1pbmVkIGJ5IG5ldyBtaW5pbXVtIGFuZCBtYXhpbXVtIHZhbHVlcy4gVGhlc2UgbWluaW11bSBhbmQgbWF4aW11bSB2YWx1ZXMgYXJlIHJlZmVyZW50aWFsOyB0aGUgbmV3IHZhbHVlIGlzIG5vdCBjbGFtcGVkIGJ5IHRoZW0uXHJcblx0XHQgKiBAcGFyYW0gdmFsdWVcdFRoZSB2YWx1ZSB0byBiZSByZS1tYXBwZWQuXHJcblx0XHQgKiBAcGFyYW0gb2xkTWluXHRUaGUgcHJldmlvdXMgbWluaW11bSB2YWx1ZS5cclxuXHRcdCAqIEBwYXJhbSBvbGRNYXhcdFRoZSBwcmV2aW91cyBtYXhpbXVtIHZhbHVlLlxyXG5cdFx0ICogQHBhcmFtIG5ld01pblx0VGhlIG5ldyBtaW5pbXVtIHZhbHVlLlxyXG5cdFx0ICogQHBhcmFtIG5ld01heFx0VGhlIG5ldyBtYXhpbXVtIHZhbHVlLlxyXG5cdFx0ICogQHJldHVyblx0XHRcdFRoZSBuZXcgdmFsdWUsIG1hcHBlZCB0byB0aGUgbmV3IHJhbmdlLlxyXG5cdFx0ICovXHJcblx0XHRzdGF0aWMgbWFwKHZhbHVlOm51bWJlciwgb2xkTWluOm51bWJlciwgb2xkTWF4Om51bWJlciwgbmV3TWluOm51bWJlciA9IDAsIG5ld01heDpudW1iZXIgPSAxLCBjbGFtcDpCb29sZWFuID0gZmFsc2UpOm51bWJlciB7XHJcblx0XHRcdGlmIChvbGRNaW4gPT0gb2xkTWF4KSByZXR1cm4gbmV3TWluO1xyXG5cdFx0XHR0aGlzLm1hcF9wID0gKCh2YWx1ZS1vbGRNaW4pIC8gKG9sZE1heC1vbGRNaW4pICogKG5ld01heC1uZXdNaW4pKSArIG5ld01pbjtcclxuXHRcdFx0aWYgKGNsYW1wKSB0aGlzLm1hcF9wID0gbmV3TWluIDwgbmV3TWF4ID8gdGhpcy5jbGFtcCh0aGlzLm1hcF9wLCBuZXdNaW4sIG5ld01heCkgOiB0aGlzLmNsYW1wKHRoaXMubWFwX3AsIG5ld01heCwgbmV3TWluKTtcclxuXHRcdFx0cmV0dXJuIHRoaXMubWFwX3A7XHJcblx0XHR9XHJcblxyXG5cdFx0LyoqXHJcblx0XHQgKiBDbGFtcHMgYSB2YWx1ZSB0byBhIHJhbmdlLCBieSByZXN0cmljdGluZyBpdCB0byBhIG1pbmltdW0gYW5kIG1heGltdW0gdmFsdWVzIGJ1dCBmb2xkaW5nIHRoZSB2YWx1ZSB0byB0aGUgcmFuZ2UgaW5zdGVhZCBvZiBzaW1wbHkgcmVzZXR0aW5nIHRvIHRoZSBtaW5pbXVtIGFuZCBtYXhpbXVtLiBJdCB3b3JrcyBsaWtlIGEgbW9yZSBwb3dlcmZ1bCBNb2R1bG8gZnVuY3Rpb24uXHJcblx0XHQgKiBAcGFyYW0gdmFsdWVcdFRoZSB2YWx1ZSB0byBiZSBjbGFtcGVkLlxyXG5cdFx0ICogQHBhcmFtIG1pblx0XHRNaW5pbXVtIHZhbHVlIGFsbG93ZWQuXHJcblx0XHQgKiBAcGFyYW0gbWF4XHRcdE1heGltdW0gdmFsdWUgYWxsb3dlZC5cclxuXHRcdCAqIEByZXR1cm5cdFx0XHRUaGUgbmV3bHkgY2xhbXBlZCB2YWx1ZS5cclxuXHRcdCAqIEBleGFtcGxlIFNvbWUgZXhhbXBsZXM6XHJcblx0XHQgKiA8bGlzdGluZyB2ZXJzaW9uPVwiMy4wXCI+XHJcblx0XHQgKiBcdHRyYWNlKE1hdGhVdGlscy5yb3VuZENsYW1wKDE0LCAwLCAxMCkpO1xyXG5cdFx0ICogXHQvLyBSZXN1bHQ6IDRcclxuXHRcdCAqXHJcblx0XHQgKiBcdHRyYWNlKE1hdGhVdGlscy5yb3VuZENsYW1wKDM2MCwgMCwgMzYwKSk7XHJcblx0XHQgKiBcdC8vIFJlc3VsdDogMFxyXG5cdFx0ICpcclxuXHRcdCAqIFx0dHJhY2UoTWF0aFV0aWxzLnJvdW5kQ2xhbXAoMzYwLCAtMTgwLCAxODApKTtcclxuXHRcdCAqIFx0Ly8gUmVzdWx0OiAwXHJcblx0XHQgKlxyXG5cdFx0ICogXHR0cmFjZShNYXRoVXRpbHMucm91bmRDbGFtcCgyMSwgMCwgMTApKTtcclxuXHRcdCAqIFx0Ly8gUmVzdWx0OiAxXHJcblx0XHQgKlxyXG5cdFx0ICogXHR0cmFjZShNYXRoVXRpbHMucm91bmRDbGFtcCgtOTgsIDAsIDEwMCkpO1xyXG5cdFx0ICogXHQvLyBSZXN1bHQ6IDJcclxuXHRcdCAqIDwvbGlzdGluZz5cclxuXHRcdCAqL1xyXG5cdFx0Ly8gTmVlZCBhIGJldHRlciBuYW1lP1xyXG5cdFx0c3RhdGljIHJhbmdlTW9kKHZhbHVlOm51bWJlciwgbWluOm51bWJlciwgcHNldWRvTWF4Om51bWJlcik6bnVtYmVyIHtcclxuXHRcdFx0dmFyIHJhbmdlOm51bWJlciA9IHBzZXVkb01heCAtIG1pbjtcclxuXHRcdFx0dmFsdWUgPSAodmFsdWUgLSBtaW4pICUgcmFuZ2U7XHJcblx0XHRcdGlmICh2YWx1ZSA8IDApIHZhbHVlID0gcmFuZ2UgLSAoLXZhbHVlICUgcmFuZ2UpO1xyXG5cdFx0XHR2YWx1ZSArPSBtaW47XHJcblx0XHRcdHJldHVybiB2YWx1ZTtcclxuXHRcdH1cclxuXHJcblx0XHRzdGF0aWMgaXNQb3dlck9mVHdvKHZhbHVlOm51bWJlcik6Qm9vbGVhbiB7XHJcblx0XHRcdC8vIFJldHVybiB0cnVlIGlmIGEgbnVtYmVyIGlmIGEgcG93ZXIgb2YgdHdvICgyLCA0LCA4LCBldGMpXHJcblx0XHRcdC8vIFRoZXJlJ3MgcHJvYmFibHkgYSBiZXR0ZXIgd2F5LCBidXQgdHJ5aW5nIHRvIGF2b2lkIGJpdHdpc2UgbWFuaXB1bGF0aW9uc1xyXG5cdFx0XHR3aGlsZSAodmFsdWUgJSAyID09IDAgJiYgdmFsdWUgPiAyKSB2YWx1ZSAvPSAyO1xyXG5cdFx0XHRyZXR1cm4gdmFsdWUgPT0gMjtcclxuXHRcdH1cclxuXHJcblx0XHRzdGF0aWMgZ2V0SGlnaGVzdFBvd2VyT2ZUd28odmFsdWU6bnVtYmVyKTpudW1iZXIge1xyXG5cdFx0XHQvLyBSZXR1cm4gYSBwb3dlciBvZiB0d28gbnVtYmVyIHRoYXQgaXMgaGlnaGVyIHRoYW4gdGhlIHBhc3NlZCB2YWx1ZVxyXG5cdFx0XHR2YXIgYzpudW1iZXIgPSAxO1xyXG5cdFx0XHR3aGlsZSAoYyA8IHZhbHVlKSBjICo9IDI7XHJcblx0XHRcdHJldHVybiBjO1xyXG5cdFx0fVxyXG5cdH1cclxuXHJcbn0iXSwic291cmNlUm9vdCI6Ii9zb3VyY2UvIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInV0aWxzL01hdGhVdGlscy50cyJdLCJuYW1lcyI6WyJNYXRoVXRpbHMiLCJNYXRoVXRpbHMuY29uc3RydWN0b3IiLCJNYXRoVXRpbHMuY2xhbXAiLCJNYXRoVXRpbHMuY2xhbXBBdXRvIiwiTWF0aFV0aWxzLm1hcCIsIk1hdGhVdGlscy5yYW5nZU1vZCIsIk1hdGhVdGlscy5pc1Bvd2VyT2ZUd28iLCJNYXRoVXRpbHMuZ2V0SGlnaGVzdFBvd2VyT2ZUd28iXSwibWFwcGluZ3MiOiI7SUFBQSxBQUdBOztPQURHOztRQUNIQTtRQTZGQUMsQ0FBQ0E7UUFyRkFELDZDQUE2Q0E7UUFDN0NBLHNFQUFzRUE7UUFFdEVBOzs7Ozs7V0FNR0E7UUFDSUEsZUFBS0EsR0FBWkEsVUFBYUEsS0FBWUEsRUFBRUEsR0FBY0EsRUFBRUEsR0FBY0E7WUFBOUJFLG1CQUFjQSxHQUFkQSxPQUFjQTtZQUFFQSxtQkFBY0EsR0FBZEEsT0FBY0E7WUFDeERBLE1BQU1BLENBQUNBLEtBQUtBLEdBQUdBLEdBQUdBLEdBQUdBLEdBQUdBLEdBQUdBLEtBQUtBLEdBQUdBLEdBQUdBLEdBQUdBLEdBQUdBLEdBQUdBLEtBQUtBLENBQUNBO1FBQ3REQSxDQUFDQTtRQUVNRixtQkFBU0EsR0FBaEJBLFVBQWlCQSxLQUFZQSxFQUFFQSxNQUFpQkEsRUFBRUEsTUFBaUJBO1lBQXBDRyxzQkFBaUJBLEdBQWpCQSxVQUFpQkE7WUFBRUEsc0JBQWlCQSxHQUFqQkEsVUFBaUJBO1lBQ2xFQSxFQUFFQSxDQUFDQSxDQUFDQSxNQUFNQSxHQUFHQSxNQUFNQSxDQUFDQSxDQUFDQSxDQUFDQTtnQkFDckJBLElBQUlBLENBQUNBLEdBQVVBLE1BQU1BLENBQUNBO2dCQUN0QkEsTUFBTUEsR0FBR0EsTUFBTUEsQ0FBQ0E7Z0JBQ2hCQSxNQUFNQSxHQUFHQSxDQUFDQSxDQUFDQTtZQUNaQSxDQUFDQTtZQUNEQSxNQUFNQSxDQUFDQSxLQUFLQSxHQUFHQSxNQUFNQSxHQUFHQSxNQUFNQSxHQUFHQSxLQUFLQSxHQUFH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RkQsMkJBNkZDLENBQUEiLCJmaWxlIjoidXRpbHMvTWF0aFV0aWxzLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyoqXHJcbiAqIEBhdXRob3IgWmVoIEZlcm5hbmRvIC0geiBhdCB6ZWguY29tLmJyXHJcbiAqL1xyXG5leHBvcnQgZGVmYXVsdCBjbGFzcyBNYXRoVXRpbHMge1xyXG5cclxuXHRzdGF0aWMgREVHMlJBRDpudW1iZXIgPSAxLzE4MCAqIE1hdGguUEk7XHJcblx0c3RhdGljIFJBRDJERUc6bnVtYmVyID0gMS9NYXRoLlBJICogMTgwO1xyXG5cclxuXHQvLyBUZW1wb3JhcnkgdmFycyBmb3IgZmFzdGVyIGFsbG9jYXRpb25zXHJcblx0cHJpdmF0ZSBzdGF0aWMgbWFwX3A6bnVtYmVyO1xyXG5cclxuXHQvLyBJbmxpbmluZzogaHR0cDovL3d3dy5ieXRlYXJyYXkub3JnLz9wPTQ3ODlcclxuXHQvLyBOb3Qgd29ya2luZzogcmV0dXJuaW5nIGEgYnVmZmVyIHVuZGVyZmxvdyBldmVyeSB0aW1lIEkgdHJ5IHVzaW5nIGl0XHJcblxyXG5cdC8qKlxyXG5cdCAqIENsYW1wcyBhIG51bWJlciB0byBhIHJhbmdlLCBieSByZXN0cmljdGluZyBpdCB0byBhIG1pbmltdW0gYW5kIG1heGltdW0gdmFsdWVzOiBpZiB0aGUgcGFzc2VkIHZhbHVlIGlzIGxvd2VyIHRoYW4gdGhlIG1pbmltdW0gdmFsdWUsIGl0J3MgcmVwbGFjZWQgYnkgdGhlIG1pbmltdW07IGlmIGl0J3MgaGlnaGVyIHRoYW4gdGhlIG1heGltdW0gdmFsdWUsIGl0J3MgcmVwbGFjZWQgYnkgdGhlIG1heGltdW07IGlmIG5vdCwgaXQncyB1bmNoYW5nZWQuXHJcblx0ICogQHBhcmFtIHZhbHVlXHRUaGUgdmFsdWUgdG8gYmUgY2xhbXBlZC5cclxuXHQgKiBAcGFyYW0gbWluXHRcdE1pbmltdW0gdmFsdWUgYWxsb3dlZC5cclxuXHQgKiBAcGFyYW0gbWF4XHRcdE1heGltdW0gdmFsdWUgYWxsb3dlZC5cclxuXHQgKiBAcmV0dXJuXHRcdFx0VGhlIG5ld2x5IGNsYW1wZWQgdmFsdWUuXHJcblx0ICovXHJcblx0c3RhdGljIGNsYW1wKHZhbHVlOm51bWJlciwgbWluOm51bWJlciA9IDAsIG1heDpudW1iZXIgPSAxKTpudW1iZXIge1xyXG5cdFx0cmV0dXJuIHZhbHVlIDwgbWluID8gbWluIDogdmFsdWUgPiBtYXggPyBtYXggOiB2YWx1ZTtcclxuXHR9XHJcblxyXG5cdHN0YXRpYyBjbGFtcEF1dG8odmFsdWU6bnVtYmVyLCBjbGFtcDE6bnVtYmVyID0gMCwgY2xhbXAyOm51bWJlciA9IDEpOm51bWJlciB7XHJcblx0XHRpZiAoY2xhbXAyIDwgY2xhbXAxKSB7XHJcblx0XHRcdHZhciB2Om51bWJlciA9IGNsYW1wMjtcclxuXHRcdFx0Y2xhbXAyID0gY2xhbXAxO1xyXG5cdFx0XHRjbGFtcDEgPSB2O1xyXG5cdFx0fVxyXG5cdFx0cmV0dXJuIHZhbHVlIDwgY2xhbXAxID8gY2xhbXAxIDogdmFsdWUgPiBjbGFtcDIgPyBjbGFtcDIgOiB2YWx1ZTtcclxuXHR9XHJcblxyXG5cdC8qKlxyXG5cdCAqIE1hcHMgYSB2YWx1ZSBmcm9tIGEgcmFuZ2UsIGRldGVybWluZWQgYnkgb2xkIG1pbmltdW0gYW5kIG1heGltdW0gdmFsdWVzLCB0byBhIG5ldyByYW5nZSwgZGV0ZXJtaW5lZCBieSBuZXcgbWluaW11bSBhbmQgbWF4aW11bSB2YWx1ZXMuIFRoZXNlIG1pbmltdW0gYW5kIG1heGltdW0gdmFsdWVzIGFyZSByZWZlcmVudGlhbDsgdGhlIG5ldyB2YWx1ZSBpcyBub3QgY2xhbXBlZCBieSB0aGVtLlxyXG5cdCAqIEBwYXJhbSB2YWx1ZVx0VGhlIHZhbHVlIHRvIGJlIHJlLW1hcHBlZC5cclxuXHQgKiBAcGFyYW0gb2xkTWluXHRUaGUgcHJldmlvdXMgbWluaW11bSB2YWx1ZS5cclxuXHQgKiBAcGFyYW0gb2xkTWF4XHRUaGUgcHJldmlvdXMgbWF4aW11bSB2YWx1ZS5cclxuXHQgKiBAcGFyYW0gbmV3TWluXHRUaGUgbmV3IG1pbmltdW0gdmFsdWUuXHJcblx0ICogQHBhcmFtIG5ld01heFx0VGhlIG5ldyBtYXhpbXVtIHZhbHVlLlxyXG5cdCAqIEByZXR1cm5cdFx0XHRUaGUgbmV3IHZhbHVlLCBtYXBwZWQgdG8gdGhlIG5ldyByYW5nZS5cclxuXHQgKi9cclxuXHRzdGF0aWMgbWFwKHZhbHVlOm51bWJlciwgb2xkTWluOm51bWJlciwgb2xkTWF4Om51bWJlciwgbmV3TWluOm51bWJlciA9IDAsIG5ld01heDpudW1iZXIgPSAxLCBjbGFtcDpCb29sZWFuID0gZmFsc2UpOm51bWJlciB7XHJcblx0XHRpZiAob2xkTWluID09IG9sZE1heCkgcmV0dXJuIG5ld01pbjtcclxuXHRcdHRoaXMubWFwX3AgPSAoKHZhbHVlLW9sZE1pbikgLyAob2xkTWF4LW9sZE1pbikgKiAobmV3TWF4LW5ld01pbikpICsgbmV3TWluO1xyXG5cdFx0aWYgKGNsYW1wKSB0aGlzLm1hcF9wID0gbmV3TWluIDwgbmV3TWF4ID8gdGhpcy5jbGFtcCh0aGlzLm1hcF9wLCBuZXdNaW4sIG5ld01heCkgOiB0aGlzLmNsYW1wKHRoaXMubWFwX3AsIG5ld01heCwgbmV3TWluKTtcclxuXHRcdHJldHVybiB0aGlzLm1hcF9wO1xyXG5cdH1cclxuXHJcblx0LyoqXHJcblx0ICogQ2xhbXBzIGEgdmFsdWUgdG8gYSByYW5nZSwgYnkgcmVzdHJpY3RpbmcgaXQgdG8gYSBtaW5pbXVtIGFuZCBtYXhpbXVtIHZhbHVlcyBidXQgZm9sZGluZyB0aGUgdmFsdWUgdG8gdGhlIHJhbmdlIGluc3RlYWQgb2Ygc2ltcGx5IHJlc2V0dGluZyB0byB0aGUgbWluaW11bSBhbmQgbWF4aW11bS4gSXQgd29ya3MgbGlrZSBhIG1vcmUgcG93ZXJmdWwgTW9kdWxvIGZ1bmN0aW9uLlxyXG5cdCAqIEBwYXJhbSB2YWx1ZVx0VGhlIHZhbHVlIHRvIGJlIGNsYW1wZWQuXHJcblx0ICogQHBhcmFtIG1pblx0XHRNaW5pbXVtIHZhbHVlIGFsbG93ZWQuXHJcblx0ICogQHBhcmFtIG1heFx0XHRNYXhpbXVtIHZhbHVlIGFsbG93ZWQuXHJcblx0ICogQHJldHVyblx0XHRcdFRoZSBuZXdseSBjbGFtcGVkIHZhbHVlLlxyXG5cdCAqIEBleGFtcGxlIFNvbWUgZXhhbXBsZXM6XHJcblx0ICogPGxpc3RpbmcgdmVyc2lvbj1cIjMuMFwiPlxyXG5cdCAqIFx0dHJhY2UoTWF0aFV0aWxzLnJvdW5kQ2xhbXAoMTQsIDAsIDEwKSk7XHJcblx0ICogXHQvLyBSZXN1bHQ6IDRcclxuXHQgKlxyXG5cdCAqIFx0dHJhY2UoTWF0aFV0aWxzLnJvdW5kQ2xhbXAoMzYwLCAwLCAzNjApKTtcclxuXHQgKiBcdC8vIFJlc3VsdDogMFxyXG5cdCAqXHJcblx0ICogXHR0cmFjZShNYXRoVXRpbHMucm91bmRDbGFtcCgzNjAsIC0xODAsIDE4MCkpO1xyXG5cdCAqIFx0Ly8gUmVzdWx0OiAwXHJcblx0ICpcclxuXHQgKiBcdHRyYWNlKE1hdGhVdGlscy5yb3VuZENsYW1wKDIxLCAwLCAxMCkpO1xyXG5cdCAqIFx0Ly8gUmVzdWx0OiAxXHJcblx0ICpcclxuXHQgKiBcdHRyYWNlKE1hdGhVdGlscy5yb3VuZENsYW1wKC05OCwgMCwgMTAwKSk7XHJcblx0ICogXHQvLyBSZXN1bHQ6IDJcclxuXHQgKiA8L2xpc3Rpbmc+XHJcblx0ICovXHJcblx0Ly8gTmVlZCBhIGJldHRlciBuYW1lP1xyXG5cdHN0YXRpYyByYW5nZU1vZCh2YWx1ZTpudW1iZXIsIG1pbjpudW1iZXIsIHBzZXVkb01heDpudW1iZXIpOm51bWJlciB7XHJcblx0XHR2YXIgcmFuZ2U6bnVtYmVyID0gcHNldWRvTWF4IC0gbWluO1xyXG5cdFx0dmFsdWUgPSAodmFsdWUgLSBtaW4pICUgcmFuZ2U7XHJcblx0XHRpZiAodmFsdWUgPCAwKSB2YWx1ZSA9IHJhbmdlIC0gKC12YWx1ZSAlIHJhbmdlKTtcclxuXHRcdHZhbHVlICs9IG1pbjtcclxuXHRcdHJldHVybiB2YWx1ZTtcclxuXHR9XHJcblxyXG5cdHN0YXRpYyBpc1Bvd2VyT2ZUd28odmFsdWU6bnVtYmVyKTpCb29sZWFuIHtcclxuXHRcdC8vIFJldHVybiB0cnVlIGlmIGEgbnVtYmVyIGlmIGEgcG93ZXIgb2YgdHdvICgyLCA0LCA4LCBldGMpXHJcblx0XHQvLyBUaGVyZSdzIHByb2JhYmx5IGEgYmV0dGVyIHdheSwgYnV0IHRyeWluZyB0byBhdm9pZCBiaXR3aXNlIG1hbmlwdWxhdGlvbnNcclxuXHRcdHdoaWxlICh2YWx1ZSAlIDIgPT0gMCAmJiB2YWx1ZSA+IDIpIHZhbHVlIC89IDI7XHJcblx0XHRyZXR1cm4gdmFsdWUgPT0gMjtcclxuXHR9XHJcblxyXG5cdHN0YXRpYyBnZXRIaWdoZXN0UG93ZXJPZlR3byh2YWx1ZTpudW1iZXIpOm51bWJlciB7XHJcblx0XHQvLyBSZXR1cm4gYSBwb3dlciBvZiB0d28gbnVtYmVyIHRoYXQgaXMgaGlnaGVyIHRoYW4gdGhlIHBhc3NlZCB2YWx1ZVxyXG5cdFx0dmFyIGM6bnVtYmVyID0gMTtcclxuXHRcdHdoaWxlIChjIDwgdmFsdWUpIGMgKj0gMjtcclxuXHRcdHJldHVybiBjO1xyXG5cdH1cclxufSJdLCJzb3VyY2VSb290IjoiL3NvdXJjZS8ifQ==
